@@ -1,0 +1,5 @@
+rootProject.name = 'XMPP-Ecosystem'
+include 'Orchestrator'
+include 'Endpoint'
+include 'Repository'
+
