@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://cisecurity.org/sacm/repository" xmlns="http://cisecurity.org/sacm/repository" elementFormDefault="qualified">
+
+    <xs:annotation>
+        <xs:documentation>Basic SACM Repository content listing.  In lieu of using XEP-0214 (File Repository and Sharing), this provides a query/response interface to a client with a filesystem containing SACM assessment content</xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="sacm_repository">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element name="content" type="SacmRepositoryContentType"/>
+                    <xs:element name="content_type" type="empty"/>
+                    <xs:element name="content_request" type="SacmRepositoryContentRequestType"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="SacmRepositoryContentType">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="item" type="SacmRepositoryItemType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="requestedType" type="SacmRepositoryItemTypeType" use="optional"/>
+    </xs:complexType>
+    
+    <xs:complexType name="SacmRepositoryContentRequestType">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="item" type="SacmRepositoryItemType" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="SacmRepositoryItemType">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="type" type="SacmRepositoryItemTypeType"/>
+    </xs:complexType>
+    
+    <xs:simpleType name="SacmRepositoryItemTypeType">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SCAP">
+                <xs:annotation>
+                    <xs:documentation>SCAP data-streams, such as XCCDF/OVAL/CPE-Dictionary/CPE-OVAL or a data stream collection</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="OVAL">
+                <xs:annotation>
+                    <xs:documentation>OVAL Definitions and Variables</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SACM">
+                <xs:annotation>
+                    <xs:documentation>SACM Collection data model?</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="YANG">
+                <xs:annotation>
+                    <xs:documentation>YANG collection content?</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name='empty'>
+        <xs:restriction base='xs:string'>
+            <xs:enumeration value=''/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
