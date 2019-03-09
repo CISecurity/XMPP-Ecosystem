@@ -5,37 +5,64 @@
         <xs:documentation>Basic SACM Repository content listing.  In lieu of using XEP-0214 (File Repository and Sharing), this provides a query/response interface to a client with a filesystem containing SACM assessment content</xs:documentation>
     </xs:annotation>
 
-    <xs:element name="sacm_repository">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:choice>
-                    <xs:element name="content" type="SacmRepositoryContentType"/>
-                    <xs:element name="content_type" type="empty"/>
-                    <xs:element name="content_request" type="SacmRepositoryContentRequestType"/>
-                </xs:choice>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+    <!-- =============================================================================== -->
+    <!-- ===========================  CONTENT TYPE QUERY  ============================== -->
+    <!-- =============================================================================== -->
+    <xs:element name="content_type" type="SacmRepositoryContentTypeType"/>
+    
+    <xs:complexType name="SacmRepositoryContentTypeType">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <!-- The listing of values is the response to the query -->
+            <xs:element name="value" type="SacmRepositoryContentTypeValueType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="SacmRepositoryContentTypeValueType">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="contentType" type="SacmRepositoryItemTypeType" use="required"/>
+    </xs:complexType>
+    
+    <!-- =============================================================================== -->
+    <!-- ==============================  CONTENT QUERY  ================================ -->
+    <!-- =============================================================================== -->
+    <xs:element name="content" type="SacmRepositoryContentType"/>
     
     <xs:complexType name="SacmRepositoryContentType">
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <!-- The listing of items is the response to the query based on the attributes -->
             <xs:element name="item" type="SacmRepositoryItemType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="requestedType" type="SacmRepositoryItemTypeType" use="optional"/>
+        <xs:attribute name="requestedItem" type="xs:string" use="optional"/>
     </xs:complexType>
+    
+    <!-- =============================================================================== -->
+    <!-- ==========================  CONTENT REQUEST QUERY  ============================ -->
+    <!-- =============================================================================== -->
+    <xs:element name="content_request" type="SacmRepositoryContentRequestType"/>
     
     <xs:complexType name="SacmRepositoryContentRequestType">
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
         </xs:annotation>
-        <xs:sequence>
-            <xs:element name="item" type="SacmRepositoryItemType" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
+        <xs:attribute name="requestedType" type="SacmRepositoryItemTypeType" use="required"/>
+        <xs:attribute name="requestedItem" type="xs:string" use="required"/>
+        <xs:attribute name="toJid" type="xs:string" use="optional"/>
+        <!-- This is the response -->
+        <xs:attribute name="success" type="xs:boolean" use="optional"/>
     </xs:complexType>
     
+    <!-- =============================================================================== -->
+    <!-- ==========================  COMMON ELEMENT TYPES  ============================= -->
+    <!-- =============================================================================== -->
     <xs:complexType name="SacmRepositoryItemType">
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
@@ -69,12 +96,6 @@
                     <xs:documentation>YANG collection content?</xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name='empty'>
-        <xs:restriction base='xs:string'>
-            <xs:enumeration value=''/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

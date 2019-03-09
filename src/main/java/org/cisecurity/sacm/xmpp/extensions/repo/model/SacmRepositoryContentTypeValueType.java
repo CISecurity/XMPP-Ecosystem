@@ -17,16 +17,15 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * TBD
  * 
- * <p>Java class for SacmRepositoryItemType complex type.
+ * <p>Java class for SacmRepositoryContentTypeValueType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SacmRepositoryItemType">
+ * &lt;complexType name="SacmRepositoryContentTypeValueType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="type" type="{http://cisecurity.org/sacm/repository}SacmRepositoryItemTypeType" />
+ *       &lt;attribute name="contentType" use="required" type="{http://cisecurity.org/sacm/repository}SacmRepositoryItemTypeType" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -35,60 +34,34 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SacmRepositoryItemType")
-public class SacmRepositoryItemType {
+@XmlType(name = "SacmRepositoryContentTypeValueType")
+public class SacmRepositoryContentTypeValueType {
 
-    @XmlAttribute(name = "name")
-    protected String name;
-    @XmlAttribute(name = "type")
-    protected SacmRepositoryItemTypeType type;
+    @XmlAttribute(name = "contentType", required = true)
+    protected SacmRepositoryItemTypeType contentType;
 
     /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
-     * Gets the value of the type property.
+     * Gets the value of the contentType property.
      * 
      * @return
      *     possible object is
      *     {@link SacmRepositoryItemTypeType }
      *     
      */
-    public SacmRepositoryItemTypeType getType() {
-        return type;
+    public SacmRepositoryItemTypeType getContentType() {
+        return contentType;
     }
 
     /**
-     * Sets the value of the type property.
+     * Sets the value of the contentType property.
      * 
      * @param value
      *     allowed object is
      *     {@link SacmRepositoryItemTypeType }
      *     
      */
-    public void setType(SacmRepositoryItemTypeType value) {
-        this.type = value;
+    public void setContentType(SacmRepositoryItemTypeType value) {
+        this.contentType = value;
     }
 
 }

@@ -1,93 +1,79 @@
 package org.cisecurity.sacm.xmpp.extensions.repo
 
-import org.cisecurity.sacm.xmpp.extensions.repo.model.SACMRepositoryContentType
-import org.cisecurity.sacm.xmpp.extensions.repo.model.SACMRepositoryItemType
-import org.cisecurity.sacm.xmpp.extensions.repo.model.SACMRepositoryItemTypeType
 import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepository
+import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepositoryItemType
+import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepositoryItemTypeType
 import org.slf4j.LoggerFactory
 import rocks.xmpp.addr.Jid
 import rocks.xmpp.core.session.Manager
 import rocks.xmpp.core.session.XmppSession
-import rocks.xmpp.core.stanza.AbstractIQHandler
-import rocks.xmpp.core.stanza.IQHandler
 import rocks.xmpp.core.stanza.model.IQ
-import rocks.xmpp.core.stanza.model.StanzaError
-import rocks.xmpp.core.stanza.model.errors.Condition
 import rocks.xmpp.util.concurrent.AsyncResult
 
 class SacmRepositoryManager extends Manager {
 
 	def log = LoggerFactory.getLogger(SacmRepositoryManager.class)
 
-	// For now, I think I just need to hard-code this
-	// TODO Figure out how to configure and initialize a filesystem-based repository
-	def baseDir     = "C:\\_Development\\Projects\\Standards\\XMPP-Ecosystem\\content"
-	def benchmarks  = new File("${baseDir}\\benchmarks")
-	def definitions = new File("${baseDir}\\definitions")
 
-	def benchmarksMap  = [:]
-	def definitionsMap = [:]
-
-	private final IQHandler iqHandler
 
 	private SacmRepositoryManager(final XmppSession xmppSession) {
 		super(xmppSession)
 
-		iqHandler = new AbstractIQHandler(IQ.Type.GET) {
-			/**
-			 * If someone asks me to list available assessment content, reply.
-			 * @param iq
-			 * @return
-			 */
-			@Override
-			protected IQ processRequest(IQ iq) {
-				synchronized (this) {
-					SacmRepository sr = iq.getExtension(SacmRepository.class)
-					if (sr.content.item?.size() > 0) {
-						// The calling client is requesting a specific item.
-						SACMRepositoryItemType requestedItem = sr.content.item[0]
-						def repositoryItem = {
-							def b = benchmarksMap.find { k, v -> k == requestedItem.name && v["item"].type == requestedItem.type }
-							if (b) {
-								return b
-							} else {
-								def d = definitionsMap.find { k, v -> k == requestedItem.name && v["item"].type == requestedItem.type }
-								if (d) {
-									return d
-								} else {
-									return null
-								}
-							}
-						}.call()
-
-						if (repositoryItem) {
-							log.info "Query for Repository Item: ${requestedItem.name} --> ${repositoryItem.value["filenames"]}"
-
-							SacmRepository sacmRepository = new SacmRepository()
-							SACMRepositoryContentType content = new SACMRepositoryContentType()
-							content.item << repositoryItem.value["item"]
-							sacmRepository.content = content
-
-							return iq.createResult(sacmRepository)
-						} else {
-							return iq.createError(
-								new StanzaError(
-									Condition.ITEM_NOT_FOUND,
-									"SACM Content not found for request: ${requestedItem.name}/${requestedItem.type}"))
-						}
-
-					} else {
-						SACMRepositoryContentType content = new SACMRepositoryContentType()
-						content.item.addAll(benchmarksMap.collect { k, v -> v["item"] })
-						content.item.addAll(definitionsMap.collect { k, v -> v["item"] })
-						SacmRepository sacmRepository = new SacmRepository()
-						sacmRepository.content = content
-
-						return iq.createResult(sacmRepository)
-					}
-				}
-			}
-		}
+//		iqHandler = new AbstractIQHandler(IQ.Type.GET) {
+//			/**
+//			 * If someone asks me to list available assessment content, reply.
+//			 * @param iq
+//			 * @return
+//			 */
+//			@Override
+//			protected IQ processRequest(IQ iq) {
+//				synchronized (this) {
+//					SacmRepository sr = iq.getExtension(SacmRepository.class)
+//					if (sr.content.item?.size() > 0) {
+//						// The calling client is requesting a specific item.
+//						SacmRepositoryItemType requestedItem = sr.content.item[0]
+//						def repositoryItem = {
+//							def b = benchmarksMap.find { k, v -> k == requestedItem.name && v["item"].type == requestedItem.type }
+//							if (b) {
+//								return b
+//							} else {
+//								def d = definitionsMap.find { k, v -> k == requestedItem.name && v["item"].type == requestedItem.type }
+//								if (d) {
+//									return d
+//								} else {
+//									return null
+//								}
+//							}
+//						}.call()
+//
+//						if (repositoryItem) {
+//							log.info "Query for Repository Item: ${requestedItem.name} --> ${repositoryItem.value["filenames"]}"
+//
+//							SacmRepository sacmRepository = new SacmRepository()
+//							SacmRepositoryContentType content = new SacmRepositoryContentType()
+//							content.item << repositoryItem.value["item"]
+//							sacmRepository.content = content
+//
+//							return iq.createResult(sacmRepository)
+//						} else {
+//							return iq.createError(
+//								new StanzaError(
+//									Condition.ITEM_NOT_FOUND,
+//									"SACM Content not found for request: ${requestedItem.name}/${requestedItem.type}"))
+//						}
+//
+//					} else {
+//						SacmRepositoryContentType content = new SacmRepositoryContentType()
+//						content.item.addAll(benchmarksMap.collect { k, v -> v["item"] })
+//						content.item.addAll(definitionsMap.collect { k, v -> v["item"] })
+//						SacmRepository sacmRepository = new SacmRepository()
+//						sacmRepository.content = content
+//
+//						return iq.createResult(sacmRepository)
+//					}
+//				}
+//			}
+//		}
 	}
 
 	/**
@@ -97,7 +83,9 @@ class SacmRepositoryManager extends Manager {
 	protected void onEnable() {
 		super.onEnable()
 
-		xmppSession.addIQHandler(SacmRepository.class, iqHandler)
+		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentTypeType.class, new ContentTypeHandler())
+		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentType.class, new ContentHandler())
+		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentRequestType.class, new ContentRequestHandler())
 	}
 
 	/**
@@ -107,67 +95,81 @@ class SacmRepositoryManager extends Manager {
 	protected void onDisable() {
 		super.onDisable()
 
-		xmppSession.removeIQHandler(SacmRepository.class)
+		xmppSession.removeIQHandler(SacmRepository.SacmRepositoryContentTypeType.class)
+		xmppSession.removeIQHandler(SacmRepository.SacmRepositoryContentType.class)
+		xmppSession.removeIQHandler(SacmRepository.SacmRepositoryContentRequestType.class)
 	}
 
+	//
+	// "Outbound" IQs.  These methods are the request interfaces from this manager to another entity
+	//
+
 	/**
-	 * Initializes the manager. Logic which shouldn't be in the constructor can go here.
-	 * This allows thread-safe construction of objects, e.g. when you need to publish the "this" reference.
-	 *
-	 * @see <a href="http://www.ibm.com/developerworks/library/j-jtp0618/">Java theory and practice: Safe construction techniques</a>
+	 * Request from the repository JID, all available content types
+	 * @param jid - the JID representing a SACM content repository interface
+	 * @return the async result with the listing of available content types at that repository JID
 	 */
-	@Override
-	protected void initialize() {
-		super.initialize()
-
-		benchmarks.eachFile { f ->
-			benchmarksMap[f.name] = [
-				"item": new SACMRepositoryItemType(
-					name: f.name,
-					id: f.name.replace(" ", "_"),
-					type: SACMRepositoryItemTypeType.SCAP),
-				"filenames": f.isDirectory() ? f.listFiles().collect { fi -> fi.name } : [f.name]
-			]
-		}
-
-		log.info "Benchmarks Map --> ${benchmarksMap}"
-
-		definitions.eachFile { f ->
-			definitionsMap[f.name] = [
-				"item": new SACMRepositoryItemType(
-					name: f.name,
-					id: f.name.replace(" ", "_"),
-					type: SACMRepositoryItemTypeType.OVAL),
-				"filenames": f.isDirectory() ? f.listFiles().collect { fi -> fi.name } : [f.name]
-			]
-		}
-
-		log.info "Definitions Map --> ${definitionsMap}"
+	AsyncResult<SacmRepository.SacmRepositoryContentTypeType> listContentTypes(Jid jid) {
+		return xmppSession.query(
+			IQ.get(jid, new SacmRepository.SacmRepositoryContentTypeType()),
+			SacmRepository.SacmRepositoryContentTypeType.class)
 	}
 
 	/**
-	 * Lists all SACM content in the repository owned by the specified user
+	 * Lists all SACM content in the repository owned by the specified JID
 	 * @param jid - the JID representing a SACM content repository interface
 	 * @return the async result with the listing of available content at that repository JID
 	 */
-	AsyncResult<SacmRepository> listRepositoryContent(Jid jid) {
-		def sr = new SacmRepository()
-		sr.content = new SACMRepositoryContentType()
-		return xmppSession.query(IQ.get(jid, sr), SacmRepository.class)
+	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid) {
+		return listRepositoryItems(jid, null, null)
+	}
+	/**
+	 * Lists all SACM content in the repository owned by the specified JID
+	 * @param jid - the JID representing a SACM content repository interface
+	 * @param requestedType - filter the results of the query by content type
+	 * @return the async result with the listing of available content at that repository JID
+	 */
+	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid, String requestedType) {
+		return listRepositoryItems(jid, requestedType, null)
+	}
+	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid, String requestedType, String requestedItem) {
+		def requestedContentType = requestedType ? SacmRepositoryItemTypeType.fromValue(requestedType.toUpperCase()) : null
+
+		SacmRepository.SacmRepositoryContentType query =
+			new SacmRepository.SacmRepositoryContentType(
+				requestedType: requestedContentType,
+				requestedItem: requestedItem)
+
+		return xmppSession.query(IQ.get(jid, query), SacmRepository.SacmRepositoryContentType.class)
 	}
 
 	/**
-	 * Get named SACM content
-	 * @param jid - the JID representing a SACM content repository interface
+	 * Initiate a file transfer request to the repository JID, for files associated with a named item and content type.
+	 * The optional recipient JID allows the requestor to tell the repository to forward the files to another entity.
+	 * When the recipient JID is null, the file transfer offering goes to the requestor
+	 * @param repositoryJid - the JID representing a SACM content repository interface
+	 * @param recipientJid - an optional full JID representing the entity who should actually receive the files.  When
+	 * null, the recipient is just the entity making this call.
 	 * @param itemName - the name of the SACM content being requested
-	 * @return the async result with the named content at that repository JID
+	 * @param itemType - the type of the content being requested (SCAP, OVAL, etc)
+	 * @return An async result basically indicating either a successful request or failure.  If the request is successful,
+	 * the repository JID will initiate the file transfer separately from this request.
 	 */
-	AsyncResult<SacmRepository> getRepositoryContent(Jid jid, String itemName, String itemType) {
-		def sr = new SacmRepository()
-		sr.content = new SACMRepositoryContentType()
-		sr.content.item << new SACMRepositoryItemType(
-			name: itemName,
-			type: SACMRepositoryItemTypeType.fromValue(itemType.toUpperCase()))
-		return xmppSession.query(IQ.get(jid, sr), SacmRepository.class)
+	AsyncResult<SacmRepository.SacmRepositoryContentRequestType> requestRepositoryContent(Jid repositoryJid, Jid recipientJid, String requestedType, String requestedItem) {
+		def requestedContentType = SacmRepositoryItemTypeType.fromValue(requestedType.toUpperCase())
+
+		SacmRepository.SacmRepositoryContentRequestType contentRequest =
+			new SacmRepository.SacmRepositoryContentRequestType(
+				requestedType: requestedContentType,
+				requestedItem: requestedItem)
+
+		// If the intended recipient JID is specified, add it.  Otherwise, the IQ handler will take care of routing
+		// back to the calling JID.
+		if (recipientJid) {
+			log.info "Recipient JID --> ${recipientJid.toString()}"
+			contentRequest.toJid = recipientJid.toString()
+		}
+
+		return xmppSession.query(IQ.get(repositoryJid, requestedContentType), SacmRepository.SacmRepositoryContentRequestType.class)
 	}
 }

@@ -78,18 +78,29 @@ class XmppClientBase {
 	//
 
 
-	def listRepositoryContent(Jid repositoryJid) {
+	def listRepositoryContentTypes(Jid repositoryJid) {
 		SacmRepositoryManager srm = xmppClient.getManager(SacmRepositoryManager.class)
-		SacmRepository repo = srm.listRepositoryContent(repositoryJid).getResult()
-		repo.content.item.each { i ->
-			log.info "SACM Content Item: ${i.name}; ID: ${i.id}; Type: ${i.type.toString()}"
+		SacmRepository.SacmRepositoryContentTypeType repo = srm.listContentTypes(repositoryJid).getResult()
+		repo.value.each { i ->
+			log.info "SACM Content Type: ${i.contentType}"
 		}
 		return repo
 	}
 
-	def getRepositoryContent(Jid repositoryJid, String itemName, String itemType) {
+	def listRepositoryContent(Jid repositoryJid) {
+		return listRepositoryContent(repositoryJid, null, null)
+	}
+
+	def listRepositoryContent(Jid repositoryJid, String itemType) {
+		return listRepositoryContent(repositoryJid, itemType, null)
+	}
+
+	def listRepositoryContent(Jid repositoryJid, String itemType, String itemName) {
 		SacmRepositoryManager srm = xmppClient.getManager(SacmRepositoryManager.class)
-		SacmRepository repo = srm.getRepositoryContent(repositoryJid, itemName, itemType).getResult()
+		SacmRepository.SacmRepositoryContentType repo = srm.listRepositoryItems(repositoryJid, itemType, itemName).getResult()
+		repo.item.each { i ->
+			log.info "SACM Content Item: ${i.name}; Type: ${i.type.toString()}"
+		}
 		return repo
 	}
 
