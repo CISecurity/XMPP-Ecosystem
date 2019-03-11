@@ -163,9 +163,9 @@ class XmppClientBase {
 	 */
 	XmppSessionConfiguration createXmppSessionConfiguration() {
 		return XmppSessionConfiguration.builder()
-			.extensions(
-				// Support the SACM Repository Extension but disable it by default.
-				Extension.of(SacmRepository.NAMESPACE, SacmRepositoryManager.class, false, SacmRepository.class))
+//			.extensions(
+//				// Support the SACM Repository Extension but disable it by default.
+//				Extension.of(SacmRepository.NAMESPACE, SacmRepositoryManager.class, false, SacmRepository.class))
 			.debugger(ConsoleDebugger.class)
 			.build()
 	}

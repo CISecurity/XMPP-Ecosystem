@@ -6,8 +6,6 @@ import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepositoryItemTypeType
 import org.slf4j.LoggerFactory
 import rocks.xmpp.core.stanza.AbstractIQHandler
 import rocks.xmpp.core.stanza.model.IQ
-import rocks.xmpp.core.stanza.model.StanzaError
-import rocks.xmpp.core.stanza.model.errors.Condition
 
 class ContentHandler extends AbstractIQHandler {
 
@@ -69,6 +67,10 @@ class ContentHandler extends AbstractIQHandler {
 		return iq.createResult(rez)
 	}
 
+	/**
+	 * Read the files from the filesystem and categorize them by type
+	 * @return
+	 */
 	def initialize() {
 		benchmarks.eachFile { f ->
 			contentMap[f.name] = [

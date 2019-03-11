@@ -14,66 +14,12 @@ class SacmRepositoryManager extends Manager {
 
 	def log = LoggerFactory.getLogger(SacmRepositoryManager.class)
 
-
-
+	/**
+	 * Constructor required when extending Manager
+	 * @param xmppSession
+	 */
 	private SacmRepositoryManager(final XmppSession xmppSession) {
 		super(xmppSession)
-
-//		iqHandler = new AbstractIQHandler(IQ.Type.GET) {
-//			/**
-//			 * If someone asks me to list available assessment content, reply.
-//			 * @param iq
-//			 * @return
-//			 */
-//			@Override
-//			protected IQ processRequest(IQ iq) {
-//				synchronized (this) {
-//					SacmRepository sr = iq.getExtension(SacmRepository.class)
-//					if (sr.content.item?.size() > 0) {
-//						// The calling client is requesting a specific item.
-//						SacmRepositoryItemType requestedItem = sr.content.item[0]
-//						def repositoryItem = {
-//							def b = benchmarksMap.find { k, v -> k == requestedItem.name && v["item"].type == requestedItem.type }
-//							if (b) {
-//								return b
-//							} else {
-//								def d = definitionsMap.find { k, v -> k == requestedItem.name && v["item"].type == requestedItem.type }
-//								if (d) {
-//									return d
-//								} else {
-//									return null
-//								}
-//							}
-//						}.call()
-//
-//						if (repositoryItem) {
-//							log.info "Query for Repository Item: ${requestedItem.name} --> ${repositoryItem.value["filenames"]}"
-//
-//							SacmRepository sacmRepository = new SacmRepository()
-//							SacmRepositoryContentType content = new SacmRepositoryContentType()
-//							content.item << repositoryItem.value["item"]
-//							sacmRepository.content = content
-//
-//							return iq.createResult(sacmRepository)
-//						} else {
-//							return iq.createError(
-//								new StanzaError(
-//									Condition.ITEM_NOT_FOUND,
-//									"SACM Content not found for request: ${requestedItem.name}/${requestedItem.type}"))
-//						}
-//
-//					} else {
-//						SacmRepositoryContentType content = new SacmRepositoryContentType()
-//						content.item.addAll(benchmarksMap.collect { k, v -> v["item"] })
-//						content.item.addAll(definitionsMap.collect { k, v -> v["item"] })
-//						SacmRepository sacmRepository = new SacmRepository()
-//						sacmRepository.content = content
-//
-//						return iq.createResult(sacmRepository)
-//					}
-//				}
-//			}
-//		}
 	}
 
 	/**
@@ -123,6 +69,7 @@ class SacmRepositoryManager extends Manager {
 	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid) {
 		return listRepositoryItems(jid, null, null)
 	}
+
 	/**
 	 * Lists all SACM content in the repository owned by the specified JID
 	 * @param jid - the JID representing a SACM content repository interface
@@ -132,6 +79,15 @@ class SacmRepositoryManager extends Manager {
 	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid, String requestedType) {
 		return listRepositoryItems(jid, requestedType, null)
 	}
+
+	/**
+	 * Given both a requested name and item, retrieve it from the content repository, if available.
+	 * @param jid
+	 * @param requestedType
+	 * @param requestedItem
+	 * @return the async result with the listing of available content at that repository JID for the requested
+	 * type and item name
+	 */
 	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid, String requestedType, String requestedItem) {
 		def requestedContentType = requestedType ? SacmRepositoryItemTypeType.fromValue(requestedType.toUpperCase()) : null
 
