@@ -8,13 +8,11 @@ import rocks.xmpp.core.session.debug.ConsoleDebugger
 
 class RepositoryXmppClient extends XmppClientBase {
 
-
-
 	/**
-	 * Extending classes should override this method to create their own configuration,
-	 * including any extensions specific to that client.  By default, no custom extensions
-	 * are included, and the console debugger is turned on.
-	 * @return the XMPP Session Configuration, potentially with extensions/managers enabled.
+	 * The repository XMPP client advertises its use of the SACM Repository extension.  Service
+	 * Discovery requests of a repository client will receive a <code>feature</code> element
+	 * containing a `var` attribute value of "http://cisecurity.org/sacm/repository"
+	 * @return the XMPP Session Configuration, with the SACM repository extension enabled.
 	 */
 	@Override
 	XmppSessionConfiguration createXmppSessionConfiguration() {

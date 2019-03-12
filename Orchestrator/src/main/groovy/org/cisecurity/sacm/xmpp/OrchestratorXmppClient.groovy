@@ -8,12 +8,11 @@ import rocks.xmpp.core.session.debug.ConsoleDebugger
 
 class OrchestratorXmppClient extends XmppClientBase {
 
-
-
 	/**
-	 * Extending classes should override this method to create their own configuration,
-	 * including any extensions specific to that client.  By default, no custom extensions
-	 * are included, and the console debugger is turned on.
+	 * The orchestrator does just that, orchestrates collection and evaluation and query/storage of
+	 * information from/to a repository.  The orchestrator, much like the conductor of an orchestra, controls
+	 * the flow of information between components, and cues those components when necessary, to perform
+	 * their work.
 	 * @return the XMPP Session Configuration, potentially with extensions/managers enabled.
 	 */
 	@Override
