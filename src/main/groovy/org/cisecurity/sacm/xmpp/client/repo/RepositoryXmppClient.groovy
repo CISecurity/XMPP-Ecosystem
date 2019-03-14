@@ -1,5 +1,7 @@
-package org.cisecurity.sacm.xmpp
+package org.cisecurity.sacm.xmpp.client.repo
 
+import org.cisecurity.sacm.xmpp.repo.DatabaseConnection
+import org.cisecurity.sacm.xmpp.client.XmppClientBase
 import org.cisecurity.sacm.xmpp.extensions.repo.SacmRepositoryManager
 import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepository
 import rocks.xmpp.core.session.Extension

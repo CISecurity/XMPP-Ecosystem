@@ -1,4 +1,4 @@
-package org.cisecurity.sacm.xmpp
+package org.cisecurity.sacm.xmpp.client
 
 import org.cisecurity.sacm.xmpp.extensions.repo.SacmRepositoryManager
 import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepository
@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import rocks.xmpp.addr.Jid
 import rocks.xmpp.core.XmppException
 import rocks.xmpp.core.sasl.AuthenticationException
-import rocks.xmpp.core.session.Extension
 import rocks.xmpp.core.stream.StreamNegotiationException
 import rocks.xmpp.core.stream.model.StreamErrorException
 import rocks.xmpp.core.session.NoResponseException
@@ -78,33 +77,6 @@ class XmppClientBase {
 	//
 
 
-	def listRepositoryContentTypes(Jid repositoryJid) {
-		SacmRepositoryManager srm = xmppClient.getManager(SacmRepositoryManager.class)
-		SacmRepository.SacmRepositoryContentTypeType repo = srm.listContentTypes(repositoryJid).getResult()
-		repo.value.each { i ->
-			log.info "SACM Content Type: ${i.contentType}"
-		}
-		return repo
-	}
-
-	def listRepositoryContent(Jid repositoryJid) {
-		return listRepositoryContent(repositoryJid, null, null)
-	}
-
-	def listRepositoryContent(Jid repositoryJid, String itemType) {
-		return listRepositoryContent(repositoryJid, itemType, null)
-	}
-
-	def listRepositoryContent(Jid repositoryJid, String itemType, String itemName) {
-		SacmRepositoryManager srm = xmppClient.getManager(SacmRepositoryManager.class)
-		SacmRepository.SacmRepositoryContentType repo = srm.listRepositoryItems(repositoryJid, itemType, itemName).getResult()
-		repo.item.each { i ->
-			log.info "SACM Content Item: ${i.name}; Type: ${i.type.toString()}"
-		}
-		return repo
-	}
-
-
 	//
 	// Initialization
 	//
@@ -152,6 +124,9 @@ class XmppClientBase {
 		// Finally...
 		xmppClient.connect()
 
+		// Allow for post-connection initializations
+		postConnect()
+
 		log.info "[ END ] Initializing XMPP Client"
 	}
 
@@ -185,6 +160,12 @@ class XmppClientBase {
 	 * or assessment request listeners, etc.
 	 */
 	def configureExtensionBasedListeners() {}
+
+	/**
+	 * Allow XMPP clients to perform activities post connection; maybe things
+	 * that have nothing to do with XMPP, like database connections, etc.
+	 */
+	def postConnect() {}
 }
 
 /**

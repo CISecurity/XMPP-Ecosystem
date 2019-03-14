@@ -24,7 +24,7 @@
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="contentType" type="SacmRepositoryItemTypeType" use="required"/>
+        <xs:attribute name="contentType" type="SacmRepositoryContentTypeCodeType" use="required"/>
     </xs:complexType>
     
     <!-- =============================================================================== -->
@@ -40,7 +40,7 @@
             <!-- The listing of items is the response to the query based on the attributes -->
             <xs:element name="item" type="SacmRepositoryItemType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="requestedType" type="SacmRepositoryItemTypeType" use="optional"/>
+        <xs:attribute name="requestedType" type="SacmRepositoryContentTypeCodeType" use="optional"/>
         <xs:attribute name="requestedItem" type="xs:string" use="optional"/>
     </xs:complexType>
     
@@ -53,9 +53,8 @@
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="requestedType" type="SacmRepositoryItemTypeType" use="required"/>
-        <xs:attribute name="requestedItem" type="xs:string" use="required"/>
-        <xs:attribute name="toJid" type="xs:string" use="optional"/>
+        <xs:attribute name="assessment_content_id" type="xs:string" use="required"/>
+        <xs:attribute name="to_jid" type="xs:string" use="optional"/>
         <!-- This is the response -->
         <xs:attribute name="success" type="xs:boolean" use="optional"/>
     </xs:complexType>
@@ -67,11 +66,12 @@
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="name" type="xs:string"/>
-        <xs:attribute name="type" type="SacmRepositoryItemTypeType"/>
+        <xs:attribute name="assessment_content_id" type="xs:int"/>
+        <xs:attribute name="content_name" type="xs:string"/>
+        <xs:attribute name="content_type_code" type="SacmRepositoryContentTypeCodeType"/>
     </xs:complexType>
     
-    <xs:simpleType name="SacmRepositoryItemTypeType">
+    <xs:simpleType name="SacmRepositoryContentTypeCodeType">
         <xs:annotation>
             <xs:documentation>TBD</xs:documentation>
         </xs:annotation>

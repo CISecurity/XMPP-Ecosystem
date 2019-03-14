@@ -13,7 +13,7 @@ public abstract class SacmRepository {
 	protected List<SacmRepositoryItemType> item;
 
 	@XmlAttribute(name = "requestedType")
-	protected SacmRepositoryItemTypeType requestedType;
+	protected SacmRepositoryContentTypeCodeType requestedType;
 
 	@XmlAttribute(name = "requestedItem")
 	protected String requestedItem;
@@ -38,10 +38,10 @@ public abstract class SacmRepository {
 	 *
 	 * @return
 	 *     possible object is
-	 *     {@link SacmRepositoryItemTypeType }
+	 *     {@link SacmRepositoryContentTypeCodeType }
 	 *
 	 */
-	public SacmRepositoryItemTypeType getRequestedType() {
+	public SacmRepositoryContentTypeCodeType getRequestedType() {
 		return requestedType;
 	}
 
@@ -50,10 +50,10 @@ public abstract class SacmRepository {
 	 *
 	 * @param value
 	 *     allowed object is
-	 *     {@link SacmRepositoryItemTypeType }
+	 *     {@link SacmRepositoryContentTypeCodeType }
 	 *
 	 */
-	public void setRequestedType(SacmRepositoryItemTypeType value) {
+	public void setRequestedType(SacmRepositoryContentTypeCodeType value) {
 		this.requestedType = value;
 	}
 

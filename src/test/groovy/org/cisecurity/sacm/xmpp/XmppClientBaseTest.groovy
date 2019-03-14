@@ -1,5 +1,7 @@
 package org.cisecurity.sacm.xmpp
 
+import org.cisecurity.sacm.xmpp.client.XmppClientBase
+import org.cisecurity.sacm.xmpp.client.XmppUser
 import rocks.xmpp.core.session.XmppSession
 import spock.lang.Specification
 

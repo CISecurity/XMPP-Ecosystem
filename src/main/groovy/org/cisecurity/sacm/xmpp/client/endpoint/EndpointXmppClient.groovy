@@ -1,5 +1,6 @@
-package org.cisecurity.sacm.xmpp
+package org.cisecurity.sacm.xmpp.client.endpoint
 
+import org.cisecurity.sacm.xmpp.client.XmppClientBase
 import rocks.xmpp.extensions.filetransfer.FileTransfer
 import rocks.xmpp.extensions.filetransfer.FileTransferManager
 

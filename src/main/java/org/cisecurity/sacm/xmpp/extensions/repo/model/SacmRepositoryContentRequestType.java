@@ -17,17 +17,17 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * TBD
  * 
- * <p>Java class for SacmRepositoryItemType complex type.
+ * <p>Java class for SacmRepositoryContentRequestType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SacmRepositoryItemType">
+ * &lt;complexType name="SacmRepositoryContentRequestType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="assessment_content_id" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="content_name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="content_type_code" type="{http://cisecurity.org/sacm/repository}SacmRepositoryContentTypeCodeType" />
+ *       &lt;attribute name="assessment_content_id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="to_jid" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="success" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -36,25 +36,25 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SacmRepositoryItemType")
-public class SacmRepositoryItemType {
+@XmlType(name = "SacmRepositoryContentRequestType")
+public class SacmRepositoryContentRequestType {
 
-    @XmlAttribute(name = "assessment_content_id")
-    protected Integer assessmentContentId;
-    @XmlAttribute(name = "content_name")
-    protected String contentName;
-    @XmlAttribute(name = "content_type_code")
-    protected SacmRepositoryContentTypeCodeType contentTypeCode;
+    @XmlAttribute(name = "assessment_content_id", required = true)
+    protected String assessmentContentId;
+    @XmlAttribute(name = "to_jid")
+    protected String toJid;
+    @XmlAttribute(name = "success")
+    protected Boolean success;
 
     /**
      * Gets the value of the assessmentContentId property.
      * 
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public Integer getAssessmentContentId() {
+    public String getAssessmentContentId() {
         return assessmentContentId;
     }
 
@@ -63,59 +63,59 @@ public class SacmRepositoryItemType {
      * 
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public void setAssessmentContentId(Integer value) {
+    public void setAssessmentContentId(String value) {
         this.assessmentContentId = value;
     }
 
     /**
-     * Gets the value of the contentName property.
+     * Gets the value of the toJid property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getContentName() {
-        return contentName;
+    public String getToJid() {
+        return toJid;
     }
 
     /**
-     * Sets the value of the contentName property.
+     * Sets the value of the toJid property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setContentName(String value) {
-        this.contentName = value;
+    public void setToJid(String value) {
+        this.toJid = value;
     }
 
     /**
-     * Gets the value of the contentTypeCode property.
+     * Gets the value of the success property.
      * 
      * @return
      *     possible object is
-     *     {@link SacmRepositoryContentTypeCodeType }
+     *     {@link Boolean }
      *     
      */
-    public SacmRepositoryContentTypeCodeType getContentTypeCode() {
-        return contentTypeCode;
+    public Boolean isSuccess() {
+        return success;
     }
 
     /**
-     * Sets the value of the contentTypeCode property.
+     * Sets the value of the success property.
      * 
      * @param value
      *     allowed object is
-     *     {@link SacmRepositoryContentTypeCodeType }
+     *     {@link Boolean }
      *     
      */
-    public void setContentTypeCode(SacmRepositoryContentTypeCodeType value) {
-        this.contentTypeCode = value;
+    public void setSuccess(Boolean value) {
+        this.success = value;
     }
 
 }

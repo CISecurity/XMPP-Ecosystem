@@ -1,8 +1,8 @@
 package org.cisecurity.sacm.xmpp.extensions.repo
 
 import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepository
-import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepositoryItemType
-import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepositoryItemTypeType
+import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepositoryContentTypeCodeType
+import org.cisecurity.sacm.xmpp.repo.DatabaseConnection
 import org.slf4j.LoggerFactory
 import rocks.xmpp.addr.Jid
 import rocks.xmpp.core.session.Manager
@@ -13,6 +13,9 @@ import rocks.xmpp.util.concurrent.AsyncResult
 class SacmRepositoryManager extends Manager {
 
 	def log = LoggerFactory.getLogger(SacmRepositoryManager.class)
+
+	DatabaseConnection repositoryDatabase = new DatabaseConnection()
+
 
 	/**
 	 * Constructor required when extending Manager
@@ -29,9 +32,12 @@ class SacmRepositoryManager extends Manager {
 	protected void onEnable() {
 		super.onEnable()
 
-		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentTypeType.class, new ContentTypeHandler())
-		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentType.class, new ContentHandler())
-		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentRequestType.class, new ContentRequestHandler())
+		repositoryDatabase.openConnection()
+		repositoryDatabase.cache()
+
+		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentTypeType.class, new ContentTypeHandler(repositoryDatabase))
+		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentType.class, new ContentHandler(repositoryDatabase))
+		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentRequestType.class, new ContentRequestHandler(repositoryDatabase))
 	}
 
 	/**
@@ -40,6 +46,8 @@ class SacmRepositoryManager extends Manager {
 	@Override
 	protected void onDisable() {
 		super.onDisable()
+
+		repositoryDatabase.closeConnection()
 
 		xmppSession.removeIQHandler(SacmRepository.SacmRepositoryContentTypeType.class)
 		xmppSession.removeIQHandler(SacmRepository.SacmRepositoryContentType.class)
@@ -57,8 +65,10 @@ class SacmRepositoryManager extends Manager {
 	 */
 	AsyncResult<SacmRepository.SacmRepositoryContentTypeType> listContentTypes(Jid jid) {
 		return xmppSession.query(
-			IQ.get(jid, new SacmRepository.SacmRepositoryContentTypeType()),
-			SacmRepository.SacmRepositoryContentTypeType.class)
+			IQ.get(
+				jid,
+				new SacmRepository.SacmRepositoryContentTypeType()),
+				SacmRepository.SacmRepositoryContentTypeType.class)
 	}
 
 	/**
@@ -89,7 +99,7 @@ class SacmRepositoryManager extends Manager {
 	 * type and item name
 	 */
 	AsyncResult<SacmRepository.SacmRepositoryContentType> listRepositoryItems(Jid jid, String requestedType, String requestedItem) {
-		def requestedContentType = requestedType ? SacmRepositoryItemTypeType.fromValue(requestedType.toUpperCase()) : null
+		def requestedContentType = requestedType ? SacmRepositoryContentTypeCodeType.fromValue(requestedType.toUpperCase()) : null
 
 		SacmRepository.SacmRepositoryContentType query =
 			new SacmRepository.SacmRepositoryContentType(
@@ -112,7 +122,7 @@ class SacmRepositoryManager extends Manager {
 	 * the repository JID will initiate the file transfer separately from this request.
 	 */
 	AsyncResult<SacmRepository.SacmRepositoryContentRequestType> requestRepositoryContent(Jid repositoryJid, Jid recipientJid, String requestedType, String requestedItem) {
-		def requestedContentType = SacmRepositoryItemTypeType.fromValue(requestedType.toUpperCase())
+		def requestedContentType = SacmRepositoryContentTypeCodeType.fromValue(requestedType.toUpperCase())
 
 		SacmRepository.SacmRepositoryContentRequestType contentRequest =
 			new SacmRepository.SacmRepositoryContentRequestType(
