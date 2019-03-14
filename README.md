@@ -8,6 +8,47 @@ A number of XMPP client implementations form the components of the architecture.
 - Evaluator
 - Repository
 
+## Architecture ##
+
+```
+                 +--------------------------------------------------------------------------------+                                               +--------+
+                 |                                                                                |                                               |        |
+                 |                                    Orchestrator                                |   +------------------------------------------->        |
+                 |                                                                                |   |    Query/Retrieve                         |        |
+                 +--+--^--------------------------+------------------------------------------+----+   |    Evaluation Policy                      |        |
+                    |  |                          |                                          |        |                                           |        |
+Discover Collection |  |                          | Initiate                                 |        |                                           |        |
+   Capabilities     |  |                          | Posture                   Initiate       |        |                                           |        |
+    (XEP-0030)      |  |                          | Collection                Evaluation     |        |                          Store Posture    |        |
+                    |  |                          |                                          |        |                          Attributes       |        |
+                 +---------------------------------------------------------------------------------------------- -------------+    (XEP-0060)     |        |
+                 |  |  |                          |                                          |        |                       +------------------->        |
+                 |  |  |                          |             XMPP Server                  |        |                       |                   |        |Repository
+                 |  |  |                          |                                          |        |                       <-------------------+        |
+                 +--------------------------------------------^------------------------------------------------^-------+------+ Query/Retrieve    |        |
+                    |  |                          |           |                              |        |        |       |        Posture Attributes|        |
+                    |  |                          |           |                              |        |        |       |                          |        |
+                    |  | Advertise Collection     |           | Publish Collected            |        |        |       |                          |        |
+                    |  |     Capabilities         |           | Posture Attributes           |        |        |       |    Store Evaluation      |        |
+                    |  |      (XEP-0030)          |           |    (XEP-0060)                |        |        |       |    Results (XEP+0060)    |        |
+                    |  |                          |           |                              |        |        |       +-------------------------->        |
+                 +--v--+--------------------------v-----------+------+                       |        |        |                                  |        |
+                 |                                                   |                       |        |        |                                  |        |
+                 |                     Endpoint                      |                       |        |        |                                  |        |
+                 |                                                   |                       |        |        | Publish                          +--------+
+                 +--------------------------------+-----------^------+                       |        |        | Evaluation Results
+                                                  |           |                              |        |        | (XEP-0060)
+                                        Perform   |           | Posture                      |        |        |
+                                       Collection |           | Attributes                   |        |        |
+                                                  |           |                              |        |        |
+                                                +-v-----------+------------------------------v--------v--------+-+
+                                                |                                                                |
+                                                |                       Collector / Evaluator                    |
+                                                |                         (aka, an Assessor)                     |
+                                                |                                                                |
+                                                +----------------------------------------------------------------+
+
+```
 
 ## Orchestrator ##
 TBD
