@@ -130,10 +130,17 @@ public abstract class SacmRepository {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static final class SacmRepositoryContentRequestType extends SacmRepository {
 
-		@XmlAttribute(name = "toJid")
+		@XmlAttribute(name = "assessment_content_id")
+		protected String assessmentContentId;
+		@XmlAttribute(name = "to_jid")
 		protected String toJid;
 		@XmlAttribute(name = "success")
 		protected Boolean success;
+
+		public String getAssessmentContentId() { return assessmentContentId; }
+		public void setAssessmentContentId(java.lang.String assessmentContentId) {
+			this.assessmentContentId = assessmentContentId;
+		}
 
 		/**
 		 * Gets the value of the toJid property.

@@ -4,6 +4,7 @@ import org.cisecurity.sacm.xmpp.repo.DatabaseConnection
 import org.cisecurity.sacm.xmpp.client.XmppClientBase
 import org.cisecurity.sacm.xmpp.extensions.repo.SacmRepositoryManager
 import org.cisecurity.sacm.xmpp.extensions.repo.model.SacmRepository
+import rocks.xmpp.addr.Jid
 import rocks.xmpp.core.session.Extension
 import rocks.xmpp.core.session.XmppSessionConfiguration
 import rocks.xmpp.core.session.debug.ConsoleDebugger
@@ -23,5 +24,23 @@ class RepositoryXmppClient extends XmppClientBase {
 				Extension.of(SacmRepository.NAMESPACE, SacmRepositoryManager.class, true, SacmRepository.class))
 			.debugger(ConsoleDebugger.class)
 			.build()
+	}
+
+
+	//
+	// OPERATIONAL
+	//
+
+	/**
+	 * Provide file-based content, stored in a repository, to the endpoint JID
+	 * @param endpointJid
+	 * @param assessmentContentId
+	 * @return
+	 */
+	def transferRepositoryContent(Jid endpointJid, String assessmentContentId) {
+		SacmRepositoryManager srm = xmppClient.getManager(SacmRepositoryManager.class)
+		SacmRepository.SacmRepositoryContentRequestType request = srm.requestRepositoryContent(endpointJid, assessmentContentId).result
+		log.info "SACM Content Request: Endpoint: ${endpointJid}; Content ID: ${assessmentContentId}; Success? ${request.success}"
+		return request
 	}
 }

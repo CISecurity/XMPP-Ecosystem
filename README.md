@@ -5,7 +5,7 @@ A number of XMPP client implementations form the components of the architecture.
 
 - Orchestrator
 - Collector
-- Evaluator
+- Collector/Evaluator (Assessor)
 - Repository
 
 ## Architecture ##

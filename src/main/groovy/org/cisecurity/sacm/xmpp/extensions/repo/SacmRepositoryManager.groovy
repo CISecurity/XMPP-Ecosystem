@@ -37,7 +37,9 @@ class SacmRepositoryManager extends Manager {
 
 		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentTypeType.class, new ContentTypeHandler(repositoryDatabase))
 		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentType.class, new ContentHandler(repositoryDatabase))
-		xmppSession.addIQHandler(SacmRepository.SacmRepositoryContentRequestType.class, new ContentRequestHandler(repositoryDatabase))
+		xmppSession.addIQHandler(
+			SacmRepository.SacmRepositoryContentRequestType.class,
+			new ContentRequestHandler(xmppSession, repositoryDatabase))
 	}
 
 	/**
@@ -116,18 +118,13 @@ class SacmRepositoryManager extends Manager {
 	 * @param repositoryJid - the JID representing a SACM content repository interface
 	 * @param recipientJid - an optional full JID representing the entity who should actually receive the files.  When
 	 * null, the recipient is just the entity making this call.
-	 * @param itemName - the name of the SACM content being requested
-	 * @param itemType - the type of the content being requested (SCAP, OVAL, etc)
+	 * @param assessmentContentId - the unique identifier for the requested content
 	 * @return An async result basically indicating either a successful request or failure.  If the request is successful,
 	 * the repository JID will initiate the file transfer separately from this request.
 	 */
-	AsyncResult<SacmRepository.SacmRepositoryContentRequestType> requestRepositoryContent(Jid repositoryJid, Jid recipientJid, String requestedType, String requestedItem) {
-		def requestedContentType = SacmRepositoryContentTypeCodeType.fromValue(requestedType.toUpperCase())
-
+	AsyncResult<SacmRepository.SacmRepositoryContentRequestType> requestRepositoryContent(Jid recipientJid, String assessmentContentId) {
 		SacmRepository.SacmRepositoryContentRequestType contentRequest =
-			new SacmRepository.SacmRepositoryContentRequestType(
-				requestedType: requestedContentType,
-				requestedItem: requestedItem)
+			new SacmRepository.SacmRepositoryContentRequestType(assessmentContentId: assessmentContentId)
 
 		// If the intended recipient JID is specified, add it.  Otherwise, the IQ handler will take care of routing
 		// back to the calling JID.
@@ -136,6 +133,6 @@ class SacmRepositoryManager extends Manager {
 			contentRequest.toJid = recipientJid.toString()
 		}
 
-		return xmppSession.query(IQ.get(repositoryJid, requestedContentType), SacmRepository.SacmRepositoryContentRequestType.class)
+		return xmppSession.query(IQ.get(recipientJid, contentRequest), SacmRepository.SacmRepositoryContentRequestType.class)
 	}
 }

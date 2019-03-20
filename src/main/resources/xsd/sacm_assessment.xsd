@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://cisecurity.org/sacm/assessment" xmlns="http://cisecurity.org/sacm/assessment" elementFormDefault="qualified">
+    
+    <!-- 
+    <assessment>
+        <xccdf>
+            <content_path>endpoint_content</content_path>
+            <benchmark>CIS_Microsoft_Windows_10_Enterprise_Release_1709_Benchmark_v1.4.0-xccdf.xml</benchmark>
+            <profile>Level 1</profile>
+        </xccdf>
+    </assessment>
+    -->
+    
+    <!-- =============================================================================== -->
+    <!-- ================================  ASSESSMENT  ================================= -->
+    <!-- =============================================================================== -->
+    <xs:element name="assessment">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="datastream_collection"/>
+                <xs:element ref="xccdf"/>
+                <xs:element ref="oval_definitions"/>
+                <!-- TODO: PLACEHOLDER FOR SACM COLLECTION ELEMENT(S) -->
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="datastream_collection">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="content_path" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="collection" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="datastream" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="checklist" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="profile" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="xccdf">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="content_path" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="benchmark" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="profile" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="oval_definitions">
+        <xs:annotation>
+            <xs:documentation>TBD</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="content_path" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="definitions" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="variables" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="profile" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

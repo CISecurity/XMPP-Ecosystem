@@ -1,6 +1,7 @@
 package org.cisecurity.sacm.xmpp
 
 import org.cisecurity.sacm.xmpp.client.XmppUser
+import org.cisecurity.sacm.xmpp.client.endpoint.EndpointXmppClient
 import org.cisecurity.sacm.xmpp.client.orchestrator.OrchestratorXmppClient
 import org.cisecurity.sacm.xmpp.client.repo.RepositoryXmppClient
 import spock.lang.Specification
@@ -94,5 +95,42 @@ class OrchestratorXmppClientTest extends Specification {
 			def repo = bx.listRepositoryContent(rx.xmppClient.connectedResource, null, "apple_osx_10.12")
 		then: "Good things happen"
 			assert repo.item.size() == 1
+			assert repo.item[0].assessmentContentId == 3
+	}
+
+	def "Perform an assessment"() {
+		given: "A base client and a repository client"
+			def b = new XmppUser(username: "orchestrator", credentials: "Pt3ttcs2h!")
+			def bx = new OrchestratorXmppClient(xmppUser: b)
+			bx.connect()
+
+			def e = new XmppUser(username: "ubuntu", credentials: "Pt3ttcs2h!")
+			def ep = new EndpointXmppClient(xmppUser: e)
+			ep.connect()
+
+			def parameters = ["xccdf": "CIS_Microsoft_Windows_10_Enterprise_Release_1709_Benchmark_v1.4.0-xccdf.xml"]
+		when: "An assessment is requested"
+			def assessment = bx.tellAnEndpointToPerformAnAssessment(ep.xmppClient.connectedResource, parameters)
+		then: "Good things happen"
+			assert assessment.isScheduled()
+//			Thread.sleep(120000)
+	}
+
+	def "Perform an OVAL assessment"() {
+		given: "A base client and a repository client"
+			def b = new XmppUser(username: "orchestrator", credentials: "Pt3ttcs2h!")
+			def bx = new OrchestratorXmppClient(xmppUser: b)
+			bx.connect()
+
+			def e = new XmppUser(username: "ubuntu", credentials: "Pt3ttcs2h!")
+			def ep = new EndpointXmppClient(xmppUser: e)
+			ep.connect()
+
+			def parameters = ["oval_definitions": "microsoft_windows_10b.xml"]
+		when: "An assessment is requested"
+			def assessment = bx.tellAnEndpointToPerformAnAssessment(ep.xmppClient.connectedResource, parameters)
+			Thread.sleep(15000)
+		then: "Good things happen"
+			assert assessment.isScheduled()
 	}
 }
