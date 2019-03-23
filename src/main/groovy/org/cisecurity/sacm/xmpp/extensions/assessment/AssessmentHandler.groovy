@@ -1,5 +1,11 @@
 package org.cisecurity.sacm.xmpp.extensions.assessment
 
+import com.upokecenter.cbor.CBORObject
+import de.hsbremen.tc.tnc.map.cbor.objects.CborOpsHelper
+import de.hsbremen.tc.tnc.map.cbor.objects.CborResponseEventDecoder
+import de.hsbremen.tc.tnc.map.client.Client
+import de.hsbremen.tc.tnc.map.data.metadata.MetadataCardinalityEnum
+import de.hsbremen.tc.tnc.map.data.metadata.MetadataLifetimeEnum
 import groovy.xml.XmlUtil
 import org.cisecurity.assessor.impl.XccdfCollectionEngine
 import org.cisecurity.assessor.impl.status.ConsoleStatusWriter
@@ -9,6 +15,7 @@ import org.cisecurity.assessor.intf.IDatastreamEngine
 import org.cisecurity.assessor.parser.IDatastreamCollectionParser
 import org.cisecurity.assessor.parser.file.XccdfCollectionParser
 import org.cisecurity.assessor.util.AssessorUtilities
+import org.cisecurity.sacm.xmpp.client.endpoint.ExampleMapData
 import org.cisecurity.sacm.xmpp.extensions.assessment.model.Assessment
 import org.cisecurity.sacm.xmpp.extensions.assessment.model.DatastreamCollection
 import org.cisecurity.sacm.xmpp.extensions.assessment.model.OvalDefinitions
@@ -194,6 +201,31 @@ class AssessmentHandler extends AbstractIQHandler {
 				w.write(XmlUtil.serialize(engine.getOutputReport()))
 			}
 			session.disconnect()
+
+			InetAddress localhost = InetAddress.getLocalHost()
+			int port = 9999
+
+			// Create a MAP "publisher"
+			Client c = new Client(new CborResponseEventDecoder())
+			c.connect(localhost, port)
+
+			CBORObject o = CborOpsHelper.createNewAssociationClientMessage()
+			c.send(o)
+			c.receive()
+
+			o = CborOpsHelper.createPublishClientMessage(
+				c.getAssociationId(),
+				CborOpsHelper.createPublishUpdate(
+					ExampleMapData.getEndpointIdentifier(xmppSession.connectedResource.toString()),
+					ExampleMapData.getPolicyIdentifier("Password", ["${ExampleMapData.ExampleIds.MIN_LENGTH}": 14]),
+					ExampleMapData.getExpectedPolicyMetadata(
+						MetadataLifetimeEnum.FOREVER, MetadataCardinalityEnum.SINGLE),
+					ExampleMapData.getActualPolicyMetadata(
+						MetadataLifetimeEnum.FOREVER,
+						MetadataCardinalityEnum.SINGLE, ["${ExampleMapData.ExampleIds.MIN_LENGTH}": 22])))
+			c.send(o)
+			c.receive()
+
 		}
 		return (assessmentFuture != null)
 	}

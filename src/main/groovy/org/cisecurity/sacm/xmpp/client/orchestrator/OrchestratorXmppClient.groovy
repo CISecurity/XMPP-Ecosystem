@@ -31,15 +31,22 @@ class OrchestratorXmppClient extends XmppClientBase {
 			.extensions(
 				// Talk to a repository...
 				Extension.of(SacmRepository.NAMESPACE, SacmRepositoryManager.class, false, SacmRepository.class),
-			Extension.of(Assessment.NAMESPACE, SacmAssessmentManager.class, true, Assessment.class)
+				Extension.of(Assessment.NAMESPACE, SacmAssessmentManager.class, true, Assessment.class)
 			)
 			.debugger(ConsoleDebugger.class)
 			.build()
 	}
 
+	@Override
+	def postConnect() {
+		// subscribe to the map server
+	}
+
 	//
 	// OPERATIONAL
 	//
+
+	//def callback()
 
 	/**
 	 * Ask a repository entity for a listing of unique content types.
