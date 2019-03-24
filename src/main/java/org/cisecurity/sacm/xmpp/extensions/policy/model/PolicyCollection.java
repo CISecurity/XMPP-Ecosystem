@@ -158,13 +158,13 @@ public class PolicyCollection {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Publisher: ").append(publisher.toString()).append("\\n");
-        sb.append("Policy: ").append(policy.toString()).append("\\n");
+        sb.append("Publisher: ").append(publisher.toString()).append("; ");
+        sb.append("Policy: ").append(policy.toString()).append("; ");
         if (expected != null) {
-            sb.append("Expected: ").append(expected.toString()).append("\\n");
+            sb.append("Expected: ").append(expected.toString()).append("; ");
         }
         if (actual != null) {
-            sb.append("Actual: ").append(actual.toString()).append("\\n");
+            sb.append("Actual: ").append(actual.toString()).append("; ");
         }
         return sb.toString();
     }

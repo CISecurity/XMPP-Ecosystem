@@ -93,4 +93,11 @@ public class Actual {
         this.datatype = value;
     }
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[Datatype: ").append(datatype).append("; Value: ").append(content).append("]");
+		return sb.toString();
+	}
+
 }

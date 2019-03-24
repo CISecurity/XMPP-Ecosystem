@@ -5,5 +5,5 @@
 // Generated on: 2019.03.24 at 06:17:58 AM EDT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://cisecurity.org/sacm/assessment", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://cisecurity.org/sacm/policy", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.cisecurity.sacm.xmpp.extensions.policy.model;

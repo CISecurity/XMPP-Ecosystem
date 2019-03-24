@@ -15,6 +15,7 @@ import rocks.xmpp.core.net.client.SocketConnectionConfiguration
 import rocks.xmpp.core.session.XmppClient
 import rocks.xmpp.core.session.XmppSessionConfiguration
 import rocks.xmpp.core.session.debug.ConsoleDebugger
+import rocks.xmpp.extensions.vcard.temp.VCardManager
 
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -56,6 +57,8 @@ class XmppClientBase {
 				xmppClient.login(xmppUser.username, xmppUser.credentials, xmppUser.resource)
 
 				log.info "User ${xmppUser.username} is connected."
+
+				postLogon()
 			} catch (XmppException e) {
 				log.error "An XMPP Exception was thrown during LOGIN", e
 			}
@@ -166,6 +169,11 @@ class XmppClientBase {
 	 * that have nothing to do with XMPP, like database connections, etc.
 	 */
 	def postConnect() {}
+
+	/**
+	 * Allow XMPP clients to perform activities post successful logon
+	 */
+	def postLogon() {}
 }
 
 /**

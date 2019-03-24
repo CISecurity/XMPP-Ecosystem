@@ -133,4 +133,20 @@ class OrchestratorXmppClientTest extends Specification {
 		then: "Good things happen"
 			assert assessment.isScheduled()
 	}
+
+	def "Publish something to the Collector"() {
+		given: "The orchestrator"
+			def b = new XmppUser(username: "orchestrator", credentials: "Pt3ttcs2h!")
+			def bx = new OrchestratorXmppClient(xmppUser: b)
+			bx.connect()
+
+			def e = new XmppUser(username: "ubuntu", credentials: "Pt3ttcs2h!")
+			def ep = new EndpointXmppClient(xmppUser: e)
+			ep.connect()
+		when: "A payload is published"
+			bx.publishPolicy()
+			Thread.sleep(15000)
+		then: "The Collector receives the event and logs it"
+			true
+	}
 }

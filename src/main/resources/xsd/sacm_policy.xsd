@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://cisecurity.org/sacm/assessment" xmlns="http://cisecurity.org/sacm/assessment" elementFormDefault="qualified">
+    
+    <!-- 
+    <policy_collection>
+        <publisher jid="JID">
+        <policy name="minimum_password_length"/>
+        <expected datatype="int">22</expected>
+        <actual datatype="int">14</actual>
+    </assessment>
+    -->
+    
+    <!-- =============================================================================== -->
+    <!-- =============================  POLICY COLLECTION  ============================= -->
+    <!-- =============================================================================== -->
+    <xs:element name="policy_collection">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="publisher"/>
+                <xs:element ref="policy"/>
+                <xs:choice>
+                    <xs:element ref="expected"/>
+                    <xs:element ref="actual"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="publisher">
+        <xs:complexType>
+            <xs:attribute name="jid" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="policy">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="expected">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="actual">
+        <xs:complexType mixed="true">
+            <xs:attribute name="datatype" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
